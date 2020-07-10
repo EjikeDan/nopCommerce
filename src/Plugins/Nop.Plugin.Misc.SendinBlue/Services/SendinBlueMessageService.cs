@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Nop.Core;
+using Nop.Core.Domain.Affiliates;
 using Nop.Core.Domain.Common;
-using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Messages;
-using Nop.Services.Affiliates;
+using Nop.Services;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Configuration;
@@ -39,8 +39,8 @@ namespace Nop.Plugin.Misc.SendinBlue.Services
         public SendinBlueMessageService(CommonSettings commonSettings,
             EmailAccountSettings emailAccountSettings,
             IAddressService addressService,
-            IAffiliateService affiliateService,
             ICustomerService customerService,
+            ICrudMethods<Affiliate> affiliateCrudMethods,
             IEmailAccountService emailAccountService,
             IEventPublisher eventPublisher,
             IGenericAttributeService genericAttributeService,
@@ -59,8 +59,8 @@ namespace Nop.Plugin.Misc.SendinBlue.Services
             : base(commonSettings,
                 emailAccountSettings,
                 addressService,
-                affiliateService,
                 customerService,
+                affiliateCrudMethods,
                 emailAccountService,
                 eventPublisher,
                 languageService,

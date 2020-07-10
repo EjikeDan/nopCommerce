@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Nop.Core;
+using Nop.Core.Domain.Blogs;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Gdpr;
 using Nop.Data;
@@ -33,6 +34,7 @@ namespace Nop.Services.Gdpr
         private readonly IBlogService _blogService;
         private readonly ICacheKeyService _cacheKeyService;
         private readonly ICustomerService _customerService;
+        private readonly ICrudMethods<BlogComment> _blogCommentCrudMethods;
         private readonly IExternalAuthenticationService _externalAuthenticationService;
         private readonly IEventPublisher _eventPublisher;
         private readonly IForumService _forumService;
@@ -54,6 +56,7 @@ namespace Nop.Services.Gdpr
             IBlogService blogService,
             ICacheKeyService cacheKeyService,
             ICustomerService customerService,
+            ICrudMethods<BlogComment> blogCommentCrudMethods,
             IExternalAuthenticationService externalAuthenticationService,
             IEventPublisher eventPublisher,
             IForumService forumService,
@@ -71,6 +74,7 @@ namespace Nop.Services.Gdpr
             _blogService = blogService;
             _cacheKeyService = cacheKeyService;
             _customerService = customerService;
+            _blogCommentCrudMethods = blogCommentCrudMethods;
             _externalAuthenticationService = externalAuthenticationService;
             _eventPublisher = eventPublisher;
             _forumService = forumService;
@@ -325,7 +329,7 @@ namespace Nop.Services.Gdpr
 
             //blog comments
             var blogComments = _blogService.GetAllComments(customerId: customer.Id);
-            _blogService.DeleteBlogComments(blogComments);
+            _blogCommentCrudMethods.Delete(blogComments);
 
             //news comments
             var newsComments = _newsService.GetAllComments(customerId: customer.Id);

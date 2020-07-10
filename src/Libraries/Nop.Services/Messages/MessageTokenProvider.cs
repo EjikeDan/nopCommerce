@@ -27,7 +27,6 @@ using Nop.Core.Domain.Tax;
 using Nop.Core.Domain.Vendors;
 using Nop.Core.Html;
 using Nop.Core.Infrastructure;
-using Nop.Services.Blogs;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Customers;
@@ -58,11 +57,11 @@ namespace Nop.Services.Messages
         private readonly IActionContextAccessor _actionContextAccessor;
         private readonly IAddressAttributeFormatter _addressAttributeFormatter;
         private readonly IAddressService _addressService;
-        private readonly IBlogService _blogService;
         private readonly ICountryService _countryService;
         private readonly ICurrencyService _currencyService;
         private readonly ICustomerAttributeFormatter _customerAttributeFormatter;
         private readonly ICustomerService _customerService;
+        private readonly ICrudMethods<BlogPost> _blogPostCrudMethods;
         private readonly IDateTimeHelper _dateTimeHelper;
         private readonly IEventPublisher _eventPublisher;
         private readonly IGenericAttributeService _genericAttributeService;
@@ -100,11 +99,11 @@ namespace Nop.Services.Messages
             IActionContextAccessor actionContextAccessor,
             IAddressAttributeFormatter addressAttributeFormatter,
             IAddressService addressService,
-            IBlogService blogService,
             ICountryService countryService,
             ICurrencyService currencyService,
             ICustomerAttributeFormatter customerAttributeFormatter,
             ICustomerService customerService,
+            ICrudMethods<BlogPost> blogPostCrudMethods,
             IDateTimeHelper dateTimeHelper,
             IEventPublisher eventPublisher,
             IGenericAttributeService genericAttributeService,
@@ -136,11 +135,11 @@ namespace Nop.Services.Messages
             _actionContextAccessor = actionContextAccessor;
             _addressAttributeFormatter = addressAttributeFormatter;
             _addressService = addressService;
-            _blogService = blogService;
             _countryService = countryService;
             _currencyService = currencyService;
             _customerAttributeFormatter = customerAttributeFormatter;
             _customerService = customerService;
+            _blogPostCrudMethods = blogPostCrudMethods;
             _dateTimeHelper = dateTimeHelper;
             _eventPublisher = eventPublisher;
             _genericAttributeService = genericAttributeService;
@@ -1258,7 +1257,7 @@ namespace Nop.Services.Messages
         /// <param name="blogComment">Blog post comment</param>
         public virtual void AddBlogCommentTokens(IList<Token> tokens, BlogComment blogComment)
         {
-            var blogPost = _blogService.GetBlogPostById(blogComment.BlogPostId);
+            var blogPost = _blogPostCrudMethods.GetById(blogComment.BlogPostId);
 
             tokens.Add(new Token("BlogComment.BlogPostTitle", blogPost.Title));
 

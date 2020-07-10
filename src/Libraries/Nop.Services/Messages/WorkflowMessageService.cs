@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Nop.Core;
+using Nop.Core.Domain.Affiliates;
 using Nop.Core.Domain.Blogs;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;
@@ -13,7 +14,6 @@ using Nop.Core.Domain.News;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Shipping;
 using Nop.Core.Domain.Vendors;
-using Nop.Services.Affiliates;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Customers;
@@ -34,8 +34,8 @@ namespace Nop.Services.Messages
         private readonly CommonSettings _commonSettings;
         private readonly EmailAccountSettings _emailAccountSettings;
         private readonly IAddressService _addressService;
-        private readonly IAffiliateService _affiliateService;
         private readonly ICustomerService _customerService;
+        private readonly ICrudMethods<Affiliate> _affiliateCrudMethods;
         private readonly IEmailAccountService _emailAccountService;
         private readonly IEventPublisher _eventPublisher;
         private readonly ILanguageService _languageService;
@@ -56,8 +56,8 @@ namespace Nop.Services.Messages
         public WorkflowMessageService(CommonSettings commonSettings,
             EmailAccountSettings emailAccountSettings,
             IAddressService addressService,
-            IAffiliateService affiliateService,
             ICustomerService customerService,
+            ICrudMethods<Affiliate> affiliateCrudMethods,
             IEmailAccountService emailAccountService,
             IEventPublisher eventPublisher,
             ILanguageService languageService,
@@ -74,8 +74,8 @@ namespace Nop.Services.Messages
             _commonSettings = commonSettings;
             _emailAccountSettings = emailAccountSettings;
             _addressService = addressService;
-            _affiliateService = affiliateService;
             _customerService = customerService;
+            _affiliateCrudMethods = affiliateCrudMethods;
             _emailAccountService = emailAccountService;
             _eventPublisher = eventPublisher;
             _languageService = languageService;
@@ -470,7 +470,7 @@ namespace Nop.Services.Messages
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
-            var affiliate = _affiliateService.GetAffiliateById(order.AffiliateId);
+            var affiliate = _affiliateCrudMethods.GetById(order.AffiliateId);
 
             if (affiliate == null)
                 throw new ArgumentNullException(nameof(affiliate));
@@ -558,7 +558,7 @@ namespace Nop.Services.Messages
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
-            var affiliate = _affiliateService.GetAffiliateById(order.AffiliateId);
+            var affiliate = _affiliateCrudMethods.GetById(order.AffiliateId);
 
             if (affiliate == null)
                 throw new ArgumentNullException(nameof(affiliate));

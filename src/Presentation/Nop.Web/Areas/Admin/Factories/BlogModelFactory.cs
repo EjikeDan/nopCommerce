@@ -7,6 +7,7 @@ using Nop.Core.Domain.Blogs;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Html;
+using Nop.Services;
 using Nop.Services.Blogs;
 using Nop.Services.Customers;
 using Nop.Services.Helpers;
@@ -32,6 +33,7 @@ namespace Nop.Web.Areas.Admin.Factories
         private readonly IBaseAdminModelFactory _baseAdminModelFactory;
         private readonly IBlogService _blogService;
         private readonly ICustomerService _customerService;
+        private readonly ICrudMethods<BlogPost> _blogPostCrudMethods;
         private readonly IDateTimeHelper _dateTimeHelper;
         private readonly ILanguageService _languageService;
         private readonly ILocalizationService _localizationService;
@@ -47,6 +49,7 @@ namespace Nop.Web.Areas.Admin.Factories
             IBaseAdminModelFactory baseAdminModelFactory,
             IBlogService blogService,
             ICustomerService customerService,
+            ICrudMethods<BlogPost> blogPostCrudMethods,
             IDateTimeHelper dateTimeHelper,
             ILanguageService languageService,
             ILocalizationService localizationService,
@@ -58,6 +61,7 @@ namespace Nop.Web.Areas.Admin.Factories
             _baseAdminModelFactory = baseAdminModelFactory;
             _blogService = blogService;
             _customerService = customerService;
+            _blogPostCrudMethods = blogPostCrudMethods;
             _dateTimeHelper = dateTimeHelper;
             _languageService = languageService;
             _localizationService = localizationService;
@@ -83,7 +87,7 @@ namespace Nop.Web.Areas.Admin.Factories
 
             //prepare nested search models
             PrepareBlogPostSearchModel(blogContentModel.BlogPosts);
-            var blogPost = _blogService.GetBlogPostById(filterByBlogPostId ?? 0);
+            var blogPost = _blogPostCrudMethods.GetById(filterByBlogPostId ?? 0);
             PrepareBlogCommentSearchModel(blogContentModel.BlogComments, blogPost);
 
             return blogContentModel;
@@ -281,7 +285,7 @@ namespace Nop.Web.Areas.Admin.Factories
                     var commentModel = blogComment.ToModel<BlogCommentModel>();
                     
                     //set title from linked blog post
-                    commentModel.BlogPostTitle = _blogService.GetBlogPostById(blogComment.BlogPostId)?.Title;
+                    commentModel.BlogPostTitle = _blogPostCrudMethods.GetById(blogComment.BlogPostId)?.Title;
 
                     if (_customerService.GetCustomerById(blogComment.CustomerId) is Customer customer)
                         commentModel.CustomerInfo = _customerService.IsRegistered(customer) ? customer.Email : _localizationService.GetResource("Admin.Customers.Guest");

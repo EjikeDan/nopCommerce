@@ -6,6 +6,7 @@ using Nop.Core.Domain.Blogs;
 using Nop.Core.Domain.Localization;
 using Nop.Core.Domain.Security;
 using Nop.Core.Rss;
+using Nop.Services;
 using Nop.Services.Blogs;
 using Nop.Services.Customers;
 using Nop.Services.Events;
@@ -35,6 +36,8 @@ namespace Nop.Web.Controllers
         private readonly IBlogService _blogService;
         private readonly ICustomerActivityService _customerActivityService;
         private readonly ICustomerService _customerService;
+        private readonly ICrudMethods<BlogComment> _blogCommentCrudMethods;
+        private readonly ICrudMethods<BlogPost> _blogPostCrudMethods;
         private readonly IEventPublisher _eventPublisher;
         private readonly ILocalizationService _localizationService;
         private readonly IPermissionService _permissionService;
@@ -56,7 +59,9 @@ namespace Nop.Web.Controllers
             IBlogService blogService,
             ICustomerActivityService customerActivityService,
             ICustomerService customerService,
-            IEventPublisher eventPublisher,
+            ICrudMethods<BlogComment> blogCommentCrudMethods,
+            ICrudMethods<BlogPost> blogPostCrudMethods,
+        IEventPublisher eventPublisher,
             ILocalizationService localizationService,
             IPermissionService permissionService,
             IStoreContext storeContext,
@@ -73,6 +78,8 @@ namespace Nop.Web.Controllers
             _blogService = blogService;
             _customerActivityService = customerActivityService;
             _customerService = customerService;
+            _blogCommentCrudMethods = blogCommentCrudMethods;
+            _blogPostCrudMethods = blogPostCrudMethods;
             _eventPublisher = eventPublisher;
             _localizationService = localizationService;
             _permissionService = permissionService;
@@ -144,7 +151,7 @@ namespace Nop.Web.Controllers
             if (!_blogSettings.Enabled)
                 return RedirectToRoute("Homepage");
 
-            var blogPost = _blogService.GetBlogPostById(blogPostId);
+            var blogPost = _blogPostCrudMethods.GetById(blogPostId);
             if (blogPost == null)
                 return InvokeHttp404();
 
@@ -177,7 +184,7 @@ namespace Nop.Web.Controllers
             if (!_blogSettings.Enabled)
                 return RedirectToRoute("Homepage");
 
-            var blogPost = _blogService.GetBlogPostById(blogPostId);
+            var blogPost = _blogPostCrudMethods.GetById(blogPostId);
             if (blogPost == null || !blogPost.AllowComments)
                 return RedirectToRoute("Homepage");
 
@@ -204,7 +211,7 @@ namespace Nop.Web.Controllers
                     CreatedOnUtc = DateTime.UtcNow,
                 };
 
-                _blogService.InsertBlogComment(comment);
+                _blogCommentCrudMethods.Insert(comment);
 
                 //notify a store owner
                 if (_blogSettings.NotifyAboutNewBlogComments)

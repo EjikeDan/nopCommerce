@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Nop.Core;
+using Nop.Core.Domain.Affiliates;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
@@ -15,6 +16,7 @@ using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Payments;
 using Nop.Core.Domain.Shipping;
 using Nop.Core.Domain.Tax;
+using Nop.Services;
 using Nop.Services.Affiliates;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
@@ -61,6 +63,7 @@ namespace Nop.Web.Areas.Admin.Factories
         private readonly ICountryService _countryService;
         private readonly ICurrencyService _currencyService;
         private readonly ICustomerService _customerService;
+        private readonly ICrudMethods<Affiliate> _affiliateCrudMethods;
         private readonly IDateTimeHelper _dateTimeHelper;
         private readonly IDiscountService _discountService;
         private readonly IDownloadService _downloadService;
@@ -110,6 +113,7 @@ namespace Nop.Web.Areas.Admin.Factories
             ICountryService countryService,
             ICurrencyService currencyService,
             ICustomerService customerService,
+            ICrudMethods<Affiliate> affiliateCrudMethods,
             IDateTimeHelper dateTimeHelper,
             IDiscountService discountService,
             IDownloadService downloadService,
@@ -155,6 +159,7 @@ namespace Nop.Web.Areas.Admin.Factories
             _countryService = countryService;
             _currencyService = currencyService;
             _customerService = customerService;
+            _affiliateCrudMethods = affiliateCrudMethods;
             _dateTimeHelper = dateTimeHelper;
             _discountService = discountService;
             _downloadService = downloadService;
@@ -1108,7 +1113,7 @@ namespace Nop.Web.Areas.Admin.Factories
                 model.CreatedOn = _dateTimeHelper.ConvertToUserTime(order.CreatedOnUtc, DateTimeKind.Utc);
                 model.CustomValues = _paymentService.DeserializeCustomValues(order);
 
-                var affiliate = _affiliateService.GetAffiliateById(order.AffiliateId);
+                var affiliate = _affiliateCrudMethods.GetById(order.AffiliateId);
                 if (affiliate != null)
                 {
                     model.AffiliateId = affiliate.Id;

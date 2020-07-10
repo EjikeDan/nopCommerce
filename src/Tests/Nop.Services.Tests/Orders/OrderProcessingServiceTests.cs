@@ -5,6 +5,7 @@ using FluentAssertions;
 using Moq;
 using Nop.Core;
 using Nop.Core.Caching;
+using Nop.Core.Domain.Affiliates;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
@@ -16,7 +17,6 @@ using Nop.Core.Domain.Shipping;
 using Nop.Core.Domain.Stores;
 using Nop.Core.Domain.Tax;
 using Nop.Data;
-using Nop.Services.Affiliates;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Customers;
@@ -95,7 +95,7 @@ namespace Nop.Services.Tests.Orders
         private Mock<IWorkflowMessageService> _workflowMessageService;
         private Mock<ICustomerActivityService> _customerActivityService;
         private Mock<ICurrencyService> _currencyService;
-        private Mock<IAffiliateService> _affiliateService;
+        private Mock<ICrudMethods<Affiliate>> _affiliateCrudMethods;
         private Mock<IVendorService> _vendorService;
         private Mock<IPdfService> _pdfService;
         private Mock<ICustomNumberFormatter> _customNumberFormatter;
@@ -140,7 +140,7 @@ namespace Nop.Services.Tests.Orders
             _workflowMessageService = new Mock<IWorkflowMessageService>();
             _customerActivityService = new Mock<ICustomerActivityService>();
             _currencyService = new Mock<ICurrencyService>();
-            _affiliateService = new Mock<IAffiliateService>();
+            _affiliateCrudMethods = new Mock<ICrudMethods<Affiliate>>();
             _vendorService = new Mock<IVendorService>();
             _pdfService = new Mock<IPdfService>();
             _customNumberFormatter = new Mock<ICustomNumberFormatter>();
@@ -288,13 +288,13 @@ namespace Nop.Services.Tests.Orders
 
             _orderProcessingService = new OrderProcessingService(_currencySettings,
                 _addressService.Object,
-                _affiliateService.Object,
                 _checkoutAttributeFormatter.Object,
                 _countryService.Object,
                 _currencyService.Object,
                 _customerActivityService.Object,
                 _customerService.Object,
                 _customNumberFormatter.Object,
+                _affiliateCrudMethods.Object,
                 _discountService.Object,
                 _encryptionService.Object,
                 _eventPublisher.Object,

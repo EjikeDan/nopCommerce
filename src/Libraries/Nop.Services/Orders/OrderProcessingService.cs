@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Nop.Core;
+using Nop.Core.Domain.Affiliates;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
@@ -42,13 +43,13 @@ namespace Nop.Services.Orders
 
         private readonly CurrencySettings _currencySettings;
         private readonly IAddressService _addressService;
-        private readonly IAffiliateService _affiliateService;
         private readonly ICheckoutAttributeFormatter _checkoutAttributeFormatter;
         private readonly ICountryService _countryService;
         private readonly ICurrencyService _currencyService;
         private readonly ICustomerActivityService _customerActivityService;
         private readonly ICustomerService _customerService;
         private readonly ICustomNumberFormatter _customNumberFormatter;
+        private readonly ICrudMethods<Affiliate> _affiliateCrudMethods;
         private readonly IDiscountService _discountService;
         private readonly IEncryptionService _encryptionService;
         private readonly IEventPublisher _eventPublisher;
@@ -90,13 +91,13 @@ namespace Nop.Services.Orders
 
         public OrderProcessingService(CurrencySettings currencySettings,
             IAddressService addressService,
-            IAffiliateService affiliateService,
             ICheckoutAttributeFormatter checkoutAttributeFormatter,
             ICountryService countryService,
             ICurrencyService currencyService,
             ICustomerActivityService customerActivityService,
             ICustomerService customerService,
             ICustomNumberFormatter customNumberFormatter,
+            ICrudMethods<Affiliate> affiliateCrudMethods,
             IDiscountService discountService,
             IEncryptionService encryptionService,
             IEventPublisher eventPublisher,
@@ -134,13 +135,13 @@ namespace Nop.Services.Orders
         {
             _currencySettings = currencySettings;
             _addressService = addressService;
-            _affiliateService = affiliateService;
             _checkoutAttributeFormatter = checkoutAttributeFormatter;
             _countryService = countryService;
             _currencyService = currencyService;
             _customerActivityService = customerActivityService;
             _customerService = customerService;
             _customNumberFormatter = customNumberFormatter;
+            _affiliateCrudMethods = affiliateCrudMethods;
             _discountService = discountService;
             _encryptionService = encryptionService;
             _eventPublisher = eventPublisher;
@@ -405,7 +406,7 @@ namespace Nop.Services.Orders
                 throw new ArgumentException("Customer is not set");
 
             //affiliate
-            var affiliate = _affiliateService.GetAffiliateById(details.Customer.AffiliateId);
+            var affiliate = _affiliateCrudMethods.GetById(details.Customer.AffiliateId);
             if (affiliate != null && affiliate.Active && !affiliate.Deleted)
                 details.AffiliateId = affiliate.Id;
 
@@ -647,7 +648,7 @@ namespace Nop.Services.Orders
                 throw new ArgumentException("Customer is not set");
 
             //affiliate
-            var affiliate = _affiliateService.GetAffiliateById(details.Customer.AffiliateId);
+            var affiliate = _affiliateCrudMethods.GetById(details.Customer.AffiliateId);
             if (affiliate != null && affiliate.Active && !affiliate.Deleted)
                 details.AffiliateId = affiliate.Id;
 

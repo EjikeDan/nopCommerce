@@ -6,6 +6,7 @@ using Nop.Core;
 using Nop.Core.Domain.Affiliates;
 using Nop.Core.Domain.Customers;
 using Nop.Data;
+using Nop.Services;
 using Nop.Services.Affiliates;
 using Nop.Services.Customers;
 
@@ -45,6 +46,7 @@ namespace Nop.Web.Framework.Mvc.Filters
 
             private readonly IAffiliateService _affiliateService;
             private readonly ICustomerService _customerService;
+            private readonly ICrudMethods<Affiliate> _affiliateCrudMethods;
             private readonly IWorkContext _workContext;
 
             #endregion
@@ -53,10 +55,12 @@ namespace Nop.Web.Framework.Mvc.Filters
 
             public CheckAffiliateFilter(IAffiliateService affiliateService, 
                 ICustomerService customerService,
+                ICrudMethods<Affiliate> affiliateCrudMethods,
                 IWorkContext workContext)
             {
                 _affiliateService = affiliateService;
                 _customerService = customerService;
+                _affiliateCrudMethods = affiliateCrudMethods;
                 _workContext = workContext;
             }
 
@@ -111,7 +115,7 @@ namespace Nop.Web.Framework.Mvc.Filters
                 if (affiliateIds.Any() && int.TryParse(affiliateIds.FirstOrDefault(), out int affiliateId)
                     && affiliateId > 0 && affiliateId != _workContext.CurrentCustomer.AffiliateId)
                 {
-                    SetCustomerAffiliateId(_affiliateService.GetAffiliateById(affiliateId));
+                    SetCustomerAffiliateId(_affiliateCrudMethods.GetById(affiliateId));
                     return;
                 }
 

@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents an affiliate
     /// </summary>
-    public partial class Affiliate : BaseEntity
+    public partial class Affiliate : BaseEntity, INotDeletedEntity
     {
         /// <summary>
         /// Gets or sets the address identifier

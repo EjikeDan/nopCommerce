@@ -14,6 +14,7 @@ using Nop.Core.Infrastructure;
 using Nop.Core.Infrastructure.DependencyManagement;
 using Nop.Core.Redis;
 using Nop.Data;
+using Nop.Services;
 using Nop.Services.Affiliates;
 using Nop.Services.Authentication;
 using Nop.Services.Authentication.External;
@@ -88,6 +89,9 @@ namespace Nop.Web.Framework.Infrastructure
 
             //repositories
             builder.RegisterGeneric(typeof(EntityRepository<>)).As(typeof(IRepository<>)).InstancePerLifetimeScope();
+
+            //CRUD
+            builder.RegisterGeneric(typeof(CrudMethods<>)).As(typeof(ICrudMethods<>)).InstancePerLifetimeScope();
 
             //plugins
             builder.RegisterType<PluginService>().As<IPluginService>().InstancePerLifetimeScope();

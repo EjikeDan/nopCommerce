@@ -8,8 +8,6 @@ using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Stores;
 using Nop.Data;
 using Nop.Services.Caching;
-using Nop.Services.Caching.Extensions;
-using Nop.Services.Events;
 
 namespace Nop.Services.Blogs
 {
@@ -22,7 +20,6 @@ namespace Nop.Services.Blogs
 
         private readonly CatalogSettings _catalogSettings;
         private readonly ICacheKeyService _cacheKeyService;
-        private readonly IEventPublisher _eventPublisher;
         private readonly IRepository<BlogComment> _blogCommentRepository;
         private readonly IRepository<BlogPost> _blogPostRepository;
         private readonly IRepository<StoreMapping> _storeMappingRepository;
@@ -34,7 +31,6 @@ namespace Nop.Services.Blogs
 
         public BlogService(CatalogSettings catalogSettings,
             ICacheKeyService cacheKeyService,
-            IEventPublisher eventPublisher,
             IRepository<BlogComment> blogCommentRepository,
             IRepository<BlogPost> blogPostRepository,
             IRepository<StoreMapping> storeMappingRepository,
@@ -42,7 +38,6 @@ namespace Nop.Services.Blogs
         {
             _catalogSettings = catalogSettings;
             _cacheKeyService = cacheKeyService;
-            _eventPublisher = eventPublisher;
             _blogCommentRepository = blogCommentRepository;
             _blogPostRepository = blogPostRepository;
             _storeMappingRepository = storeMappingRepository;
@@ -54,34 +49,6 @@ namespace Nop.Services.Blogs
         #region Methods
 
         #region Blog posts
-
-        /// <summary>
-        /// Deletes a blog post
-        /// </summary>
-        /// <param name="blogPost">Blog post</param>
-        public virtual void DeleteBlogPost(BlogPost blogPost)
-        {
-            if (blogPost == null)
-                throw new ArgumentNullException(nameof(blogPost));
-
-            _blogPostRepository.Delete(blogPost);
-
-            //event notification
-            _eventPublisher.EntityDeleted(blogPost);
-        }
-
-        /// <summary>
-        /// Gets a blog post
-        /// </summary>
-        /// <param name="blogPostId">Blog post identifier</param>
-        /// <returns>Blog post</returns>
-        public virtual BlogPost GetBlogPostById(int blogPostId)
-        {
-            if (blogPostId == 0)
-                return null;
-
-            return _blogPostRepository.ToCachedGetById(blogPostId);
-        }
 
         /// <summary>
         /// Gets all blog posts
@@ -208,37 +175,7 @@ namespace Nop.Services.Blogs
 
             return blogPostTags;
         }
-
-        /// <summary>
-        /// Inserts a blog post
-        /// </summary>
-        /// <param name="blogPost">Blog post</param>
-        public virtual void InsertBlogPost(BlogPost blogPost)
-        {
-            if (blogPost == null)
-                throw new ArgumentNullException(nameof(blogPost));
-
-            _blogPostRepository.Insert(blogPost);
-
-            //event notification
-            _eventPublisher.EntityInserted(blogPost);
-        }
-
-        /// <summary>
-        /// Updates the blog post
-        /// </summary>
-        /// <param name="blogPost">Blog post</param>
-        public virtual void UpdateBlogPost(BlogPost blogPost)
-        {
-            if (blogPost == null)
-                throw new ArgumentNullException(nameof(blogPost));
-
-            _blogPostRepository.Update(blogPost);
-
-            //event notification
-            _eventPublisher.EntityUpdated(blogPost);
-        }
-
+        
         /// <summary>
         /// Returns all posts published between the two dates.
         /// </summary>
@@ -341,46 +278,7 @@ namespace Nop.Services.Blogs
 
             return query.ToList();
         }
-
-        /// <summary>
-        /// Gets a blog comment
-        /// </summary>
-        /// <param name="blogCommentId">Blog comment identifier</param>
-        /// <returns>Blog comment</returns>
-        public virtual BlogComment GetBlogCommentById(int blogCommentId)
-        {
-            if (blogCommentId == 0)
-                return null;
-
-            return _blogCommentRepository.ToCachedGetById(blogCommentId);
-        }
-
-        /// <summary>
-        /// Get blog comments by identifiers
-        /// </summary>
-        /// <param name="commentIds">Blog comment identifiers</param>
-        /// <returns>Blog comments</returns>
-        public virtual IList<BlogComment> GetBlogCommentsByIds(int[] commentIds)
-        {
-            if (commentIds == null || commentIds.Length == 0)
-                return new List<BlogComment>();
-
-            var query = from bc in _blogCommentRepository.Table
-                        where commentIds.Contains(bc.Id)
-                        select bc;
-            var comments = query.ToList();
-            //sort by passed identifiers
-            var sortedComments = new List<BlogComment>();
-            foreach (var id in commentIds)
-            {
-                var comment = comments.Find(x => x.Id == id);
-                if (comment != null)
-                    sortedComments.Add(comment);
-            }
-
-            return sortedComments;
-        }
-
+        
         /// <summary>
         /// Get the count of blog comments
         /// </summary>
@@ -402,67 +300,7 @@ namespace Nop.Services.Blogs
             
             return _staticCacheManager.Get(cacheKey, () => query.Count());
         }
-
-        /// <summary>
-        /// Deletes a blog comment
-        /// </summary>
-        /// <param name="blogComment">Blog comment</param>
-        public virtual void DeleteBlogComment(BlogComment blogComment)
-        {
-            if (blogComment == null)
-                throw new ArgumentNullException(nameof(blogComment));
-
-            _blogCommentRepository.Delete(blogComment);
-
-            //event notification
-            _eventPublisher.EntityDeleted(blogComment);
-        }
-
-        /// <summary>
-        /// Deletes blog comments
-        /// </summary>
-        /// <param name="blogComments">Blog comments</param>
-        public virtual void DeleteBlogComments(IList<BlogComment> blogComments)
-        {
-            if (blogComments == null)
-                throw new ArgumentNullException(nameof(blogComments));
-
-            foreach (var blogComment in blogComments)
-            {
-                DeleteBlogComment(blogComment);
-            }
-        }
-
-        /// <summary>
-        /// Inserts a blog comment
-        /// </summary>
-        /// <param name="blogComment">Blog comment</param>
-        public virtual void InsertBlogComment(BlogComment blogComment)
-        {
-            if (blogComment == null)
-                throw new ArgumentNullException(nameof(blogComment));
-
-            _blogCommentRepository.Insert(blogComment);
-
-            //event notification
-            _eventPublisher.EntityInserted(blogComment);
-        }
-
-        /// <summary>
-        /// Update a blog comment
-        /// </summary>
-        /// <param name="blogComment">Blog comment</param>
-        public virtual void UpdateBlogComment(BlogComment blogComment)
-        {
-            if (blogComment == null)
-                throw new ArgumentNullException(nameof(blogComment));
-
-            _blogCommentRepository.Update(blogComment);
-
-            //event notification
-            _eventPublisher.EntityUpdated(blogComment);
-        }
-
+        
         #endregion
 
         #endregion

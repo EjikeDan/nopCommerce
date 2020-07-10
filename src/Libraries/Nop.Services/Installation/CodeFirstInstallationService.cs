@@ -35,7 +35,6 @@ using Nop.Core.Domain.Vendors;
 using Nop.Core.Infrastructure;
 using Nop.Core.Security;
 using Nop.Data;
-using Nop.Services.Blogs;
 using Nop.Services.Caching.Extensions;
 using Nop.Services.Common;
 using Nop.Services.Configuration;
@@ -63,6 +62,7 @@ namespace Nop.Services.Installation
         private readonly IRepository<ActivityLogType> _activityLogTypeRepository;
         private readonly IRepository<Address> _addressRepository;
         private readonly IRepository<Affiliate> _affiliateRepository;
+        private readonly IRepository<BlogComment> _blogCommentRepository;
         private readonly IRepository<BlogPost> _blogPostRepository;
         private readonly IRepository<Category> _categoryRepository;
         private readonly IRepository<CategoryTemplate> _categoryTemplateRepository;
@@ -130,6 +130,7 @@ namespace Nop.Services.Installation
             IRepository<ActivityLogType> activityLogTypeRepository,
             IRepository<Address> addressRepository,
             IRepository<Affiliate> affiliateRepository,
+            IRepository<BlogComment> blogCommentRepository,
             IRepository<BlogPost> blogPostRepository,
             IRepository<Category> categoryRepository,
             IRepository<CategoryTemplate> categoryTemplateRepository,
@@ -193,6 +194,7 @@ namespace Nop.Services.Installation
             _activityLogTypeRepository = activityLogTypeRepository;
             _addressRepository = addressRepository;
             _affiliateRepository = affiliateRepository;
+            _blogCommentRepository = blogCommentRepository;
             _blogPostRepository = blogPostRepository;
             _categoryRepository = categoryRepository;
             _categoryTemplateRepository = categoryTemplateRepository;
@@ -11119,7 +11121,7 @@ namespace Nop.Services.Installation
             if (defaultLanguage == null)
                 throw new Exception("Default language could not be loaded");
 
-            var blogService = EngineContext.Current.Resolve<IBlogService>();
+            var blogCommentCrudMethods = EngineContext.Current.Resolve<ICrudMethods<BlogComment>>();
 
             var blogPosts = new List<BlogPost>
             {
@@ -11171,8 +11173,7 @@ namespace Nop.Services.Installation
                 throw new Exception("No default store could be loaded");
 
             foreach (var blogPost in blogPosts)
-            {
-                blogService.InsertBlogComment(new BlogComment
+                _blogCommentRepository.Insert(new BlogComment
                 {
                     BlogPostId = blogPost.Id,
                     CustomerId = defaultCustomer.Id,
@@ -11181,7 +11182,6 @@ namespace Nop.Services.Installation
                     StoreId = defaultStore.Id,
                     CreatedOnUtc = DateTime.UtcNow
                 });
-            }
 
             _blogPostRepository.Update(blogPosts);
         }

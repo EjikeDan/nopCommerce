@@ -2,7 +2,8 @@
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
-using Nop.Services.Blogs;
+using Nop.Core.Domain.Blogs;
+using Nop.Services;
 using Nop.Services.Catalog;
 using Nop.Services.Customers;
 using Nop.Services.Forums;
@@ -18,9 +19,9 @@ namespace Nop.Web.Controllers
     {
         #region Fields
 
-        private readonly IBlogService _blogService;
         private readonly ICategoryService _categoryService;
         private readonly ICustomerService _customerService;
+        private readonly ICrudMethods<BlogPost> _blogPostCrudMethods;
         private readonly IForumService _forumService;
         private readonly IManufacturerService _manufacturerService;
         private readonly INewsService _newsService;
@@ -34,9 +35,9 @@ namespace Nop.Web.Controllers
 
         #region Ctor
 
-        public BackwardCompatibility1XController(IBlogService blogService,
-            ICategoryService categoryService,
+        public BackwardCompatibility1XController(ICategoryService categoryService,
             ICustomerService customerService,
+            ICrudMethods<BlogPost> blogPostCrudMethods,
             IForumService forumService,
             IManufacturerService manufacturerService,
             INewsService newsService,
@@ -46,9 +47,9 @@ namespace Nop.Web.Controllers
             IUrlRecordService urlRecordService,
             IWebHelper webHelper)
         {
-            _blogService = blogService;
             _categoryService = categoryService;
             _customerService = customerService;
+            _blogPostCrudMethods = blogPostCrudMethods;
             _forumService = forumService;
             _manufacturerService = manufacturerService;
             _newsService = newsService;
@@ -221,7 +222,7 @@ namespace Nop.Web.Controllers
         {
             //we can't use dash in MVC
             var blogPostId = idIncludesSename ? Convert.ToInt32(id.Split(new[] { '-' })[0]) : Convert.ToInt32(id);
-            var blogPost = _blogService.GetBlogPostById(blogPostId);
+            var blogPost = _blogPostCrudMethods.GetById(blogPostId);
             if (blogPost == null)
                 return RedirectToRoutePermanent("Homepage");
 

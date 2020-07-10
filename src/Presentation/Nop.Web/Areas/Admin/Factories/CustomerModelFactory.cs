@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Core;
+using Nop.Core.Domain.Affiliates;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
@@ -13,6 +14,7 @@ using Nop.Core.Domain.Gdpr;
 using Nop.Core.Domain.Media;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Tax;
+using Nop.Services;
 using Nop.Services.Affiliates;
 using Nop.Services.Authentication.External;
 using Nop.Services.Catalog;
@@ -61,6 +63,7 @@ namespace Nop.Web.Areas.Admin.Factories
         private readonly ICustomerAttributeParser _customerAttributeParser;
         private readonly ICustomerAttributeService _customerAttributeService;
         private readonly ICustomerService _customerService;
+        private readonly ICrudMethods<Affiliate> _affiliateCrudMethods;
         private readonly IDateTimeHelper _dateTimeHelper;
         private readonly IExternalAuthenticationService _externalAuthenticationService;
         private readonly IGdprService _gdprService;
@@ -104,6 +107,7 @@ namespace Nop.Web.Areas.Admin.Factories
             ICustomerAttributeParser customerAttributeParser,
             ICustomerAttributeService customerAttributeService,
             ICustomerService customerService,
+            ICrudMethods<Affiliate> affiliateCrudMethods,
             IDateTimeHelper dateTimeHelper,
             IExternalAuthenticationService externalAuthenticationService,
             IGdprService gdprService,
@@ -143,6 +147,7 @@ namespace Nop.Web.Areas.Admin.Factories
             _customerAttributeParser = customerAttributeParser;
             _customerAttributeService = customerAttributeService;
             _customerService = customerService;
+            _affiliateCrudMethods = affiliateCrudMethods;
             _dateTimeHelper = dateTimeHelper;
             _externalAuthenticationService = externalAuthenticationService;
             _gdprService = gdprService;
@@ -731,7 +736,7 @@ namespace Nop.Web.Areas.Admin.Factories
                         _storeService.GetAllStores().Select(x => x.Id).Count() > 1;
                    
                     //prepare model affiliate
-                    var affiliate = _affiliateService.GetAffiliateById(customer.AffiliateId);
+                    var affiliate = _affiliateCrudMethods.GetById(customer.AffiliateId);
                     if (affiliate != null)
                     {
                         model.AffiliateId = affiliate.Id;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Nop.Services.Blogs;
+using Nop.Core.Domain.Blogs;
+using Nop.Services;
 using Nop.Services.Catalog;
 using Nop.Services.News;
 using Nop.Services.Seo;
@@ -14,8 +15,8 @@ namespace Nop.Web.Controllers
     {
         #region Fields
 
-        private readonly IBlogService _blogService;
         private readonly ICategoryService _categoryService;
+        private readonly ICrudMethods<BlogPost> _blogPostCrudMethods;
         private readonly IManufacturerService _manufacturerService;
         private readonly INewsService _newsService;
         private readonly IProductTagService _productTagService;
@@ -28,8 +29,8 @@ namespace Nop.Web.Controllers
 
         #region Ctor
 
-        public BackwardCompatibility2XController(IBlogService blogService,
-            ICategoryService categoryService,
+        public BackwardCompatibility2XController(ICategoryService categoryService,
+            ICrudMethods<BlogPost> blogPostCrudMethods,
             IManufacturerService manufacturerService,
             INewsService newsService,
             IProductTagService productTagService,
@@ -38,8 +39,8 @@ namespace Nop.Web.Controllers
             IUrlRecordService urlRecordService,
             IVendorService vendorService)
         {
-            _blogService = blogService;
             _categoryService = categoryService;
+            _blogPostCrudMethods = blogPostCrudMethods;
             _manufacturerService = manufacturerService;
             _newsService = newsService;
             _productTagService = productTagService;
@@ -96,7 +97,7 @@ namespace Nop.Web.Controllers
         //in versions 2.00-2.70 we had ID in blog URLs
         public virtual IActionResult RedirectBlogPostById(int blogPostId)
         {
-            var blogPost = _blogService.GetBlogPostById(blogPostId);
+            var blogPost = _blogPostCrudMethods.GetById(blogPostId);
             if (blogPost == null)
                 return RedirectToRoutePermanent("Homepage");
 

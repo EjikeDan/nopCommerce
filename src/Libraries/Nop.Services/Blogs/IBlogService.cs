@@ -13,19 +13,6 @@ namespace Nop.Services.Blogs
         #region Blog posts
 
         /// <summary>
-        /// Deletes a blog post
-        /// </summary>
-        /// <param name="blogPost">Blog post</param>
-        void DeleteBlogPost(BlogPost blogPost);
-
-        /// <summary>
-        /// Gets a blog post
-        /// </summary>
-        /// <param name="blogPostId">Blog post identifier</param>
-        /// <returns>Blog post</returns>
-        BlogPost GetBlogPostById(int blogPostId);
-
-        /// <summary>
         /// Gets all blog posts
         /// </summary>
         /// <param name="storeId">The store identifier; pass 0 to load all records</param>
@@ -63,18 +50,6 @@ namespace Nop.Services.Blogs
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>Blog post tags</returns>
         IList<BlogPostTag> GetAllBlogPostTags(int storeId, int languageId, bool showHidden = false);
-
-        /// <summary>
-        /// Inserts a blog post
-        /// </summary>
-        /// <param name="blogPost">Blog post</param>
-        void InsertBlogPost(BlogPost blogPost);
-
-        /// <summary>
-        /// Updates the blog post
-        /// </summary>
-        /// <param name="blogPost">Blog post</param>
-        void UpdateBlogPost(BlogPost blogPost);
 
         /// <summary>
         /// Returns all posts published between the two dates.
@@ -119,20 +94,6 @@ namespace Nop.Services.Blogs
             bool? approved = null, DateTime? fromUtc = null, DateTime? toUtc = null, string commentText = null);
 
         /// <summary>
-        /// Gets a blog comment
-        /// </summary>
-        /// <param name="blogCommentId">Blog comment identifier</param>
-        /// <returns>Blog comment</returns>
-        BlogComment GetBlogCommentById(int blogCommentId);
-
-        /// <summary>
-        /// Get blog comments by identifiers
-        /// </summary>
-        /// <param name="commentIds">Blog comment identifiers</param>
-        /// <returns>Blog comments</returns>
-        IList<BlogComment> GetBlogCommentsByIds(int[] commentIds);
-
-        /// <summary>
         /// Get the count of blog comments
         /// </summary>
         /// <param name="blogPost">Blog post</param>
@@ -140,30 +101,6 @@ namespace Nop.Services.Blogs
         /// <param name="isApproved">A value indicating whether to count only approved or not approved comments; pass null to get number of all comments</param>
         /// <returns>Number of blog comments</returns>
         int GetBlogCommentsCount(BlogPost blogPost, int storeId = 0, bool? isApproved = null);
-
-        /// <summary>
-        /// Deletes a blog comment
-        /// </summary>
-        /// <param name="blogComment">Blog comment</param>
-        void DeleteBlogComment(BlogComment blogComment);
-
-        /// <summary>
-        /// Deletes blog comments
-        /// </summary>
-        /// <param name="blogComments">Blog comments</param>
-        void DeleteBlogComments(IList<BlogComment> blogComments);
-
-        /// <summary>
-        /// Inserts a blog comment
-        /// </summary>
-        /// <param name="blogComment">Blog comment</param>
-        void InsertBlogComment(BlogComment blogComment);
-
-        /// <summary>
-        /// Update a blog comment
-        /// </summary>
-        /// <param name="blogComment">Blog comment</param>
-        void UpdateBlogComment(BlogComment blogComment);
 
         #endregion
     }
